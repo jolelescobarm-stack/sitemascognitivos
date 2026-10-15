@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Examen · Sistemas Cognitivos Artificiales</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#12141c;--card:#1b1e2b;--bd:#2c3044;--tx:#e8eaf2;--mu:#9aa0b6;--ac:#7aa2ff;--ok:#38d39f;--ko:#ff6b7a;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#f5f3ee;--card:#fff;--bd:#ddd8cc;--tx:#1d2030;--mu:#667;--ac:#3659d6;--ok:#12926a;--ko:#d43b4d}}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--tx);font:16px/1.5 Inter,system-ui,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);border-bottom:1px solid var(--bd);padding:12px 16px;z-index:5}
+h1{font:700 1.15rem Fraunces,Georgia,serif;margin:0}.sub{color:var(--mu);font-size:.8rem}
+.bar{height:6px;background:var(--bd);border-radius:9px;margin-top:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--ac);width:0;transition:width .3s}
+main{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:22px}
+.tag{display:inline-block;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--ac);border:1px solid var(--bd);border-radius:20px;padding:2px 10px;margin:0 6px 12px 0}
+.q{font:600 1.2rem/1.4 Fraunces,Georgia,serif;margin:4px 0 18px}
+.o{display:flex;gap:12px;width:100%;text-align:left;background:transparent;color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;margin-bottom:10px;font:inherit;cursor:pointer}
+.o:hover:not(:disabled){border-color:var(--ac)}.o b{color:var(--mu);min-width:1.2em}
+.o.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,transparent)}.o.ko{border-color:var(--ko);background:color-mix(in srgb,var(--ko) 15%,transparent)}
+.fb{display:none;margin-top:6px;padding:12px 14px;border-radius:10px;font-size:.95rem}.fb.s{display:block}.fb.ok{background:color-mix(in srgb,var(--ok) 15%,transparent)}.fb.ko{background:color-mix(in srgb,var(--ko) 15%,transparent)}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:12px 22px;font:600 1rem Inter,sans-serif;cursor:pointer}.btn:disabled{opacity:.4;cursor:default}.btn.g{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+.row{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap}
+.ring{display:block;margin:0 auto}.c{text-align:center}.big{font:700 2.2rem Fraunces,serif}
+.t{display:flex;gap:10px;align-items:center;font-size:.85rem;margin:7px 0}.t span:first-child{flex:0 0 42%}.t .bar{flex:1;margin:0}.t i{background:var(--ok)}
+.r{border-top:1px solid var(--bd);padding:12px 0;font-size:.92rem}
+</style></head><body>
+<header><h1>Examen · Sistemas Cognitivos Artificiales</h1><div class="sub" id="sub">100 preguntas · 11 temas</div><div class="bar"><i id="pb"></i></div></header>
+<main><div class="card" id="app"></div></main>
+<script>
+const T=["T1 · Introducción al DL","T2 · Entrenamiento","T3 · Frameworks","T4 · Aspectos prácticos","T5 · CNN","T6 · Word Vectors","T7 · RNN","T8 · Deep RL","T9 · GPU y Big Data","T10 · Nube y producción","T11 · Últimos avances"];
+/* MC: [tema,pregunta,correcta,d1,d2,d3] · V/F: [tema,pregunta,true|false] (las opciones MC se barajan al iniciar) */
+const D=[
+[1,"¿Cuál es la relación correcta entre IA, ML y DL?","DL ⊂ ML ⊂ IA","ML ⊂ DL ⊂ IA","IA ⊂ ML ⊂ DL","Son conjuntos disjuntos"],
+[1,"Que el sistema aprenda también la representación a partir de datos en bruto se llama:","Representation learning","Feature engineering","Data augmentation","Transfer learning"],
+[1,"¿En qué año una CNN ganó ImageNet con gran margen?","2012","2006","2009","2016"],
+[1,"La neurona artificial de 1943 es la de:","McCulloch-Pitts","ADALINE","Rosenblatt (LSTM)","Hopfield"],
+[1,"Dos factores clave del resurgir del deep learning:","Más datos y más capacidad de cómputo","Nuevos hallazgos neurocientíficos y menos capas","Desaparición de las SVM y de los datos etiquetados","Más reglas expertas y menos GPU"],
+[1,"¿Qué aporta el bias a una neurona?","Un valor constante independiente de los inputs","La función de activación","El número de capas","El learning rate"],
+[1,"Una red donde la información fluye solo hacia delante, sin bucles, es:","Feed-forward","Recurrente","Generativa","Bidireccional"],
+[1,"El deep learning está guiado actualmente por la neurociencia.",false],
+[1,"La arquitectura LSTM data de 1997.",true],
+[2,"Las imágenes MNIST son de 28×28: la input layer tiene:","784 neuronas","28 neuronas","256 neuronas","10 neuronas"],
+[2,"El MSE se usa como función de coste porque es:","Diferenciable","Siempre convexa","Discreta","Independiente de los pesos"],
+[2,"Un learning rate demasiado grande puede provocar:","Overshoot: el valor de la función aumenta","Convergencia más rápida garantizada","Gradientes siempre nulos","Menos epochs"],
+[2,"Dataset de 10 000 puntos con batches de 10: una epoch son:","1000 steps","10 steps","100 steps","10 000 steps"],
+[2,"Backpropagation se apoya matemáticamente en:","La regla de la cadena","El teorema de Bayes","La transformada de Fourier","El teorema central del límite"],
+[2,"En una operación suma, el gradiente de salida:","Se envía igual a todos sus inputs","Se multiplica por el otro input","Va solo al input mayor","Se anula"],
+[2,"En una operación max, el gradiente:","Va al input mayor; el otro recibe 0","Se reparte a partes iguales","Se duplica","Va al input menor"],
+[2,"En backprop se guardan los valores de cada nodo en el forward pass porque:","Se necesitan para calcular gradientes en el backward pass","Solo sirven para visualizar","Se usan para aplicar dropout","No es necesario guardarlos"],
+[2,"SGD estima el gradiente con un mini-batch aleatorio de ejemplos.",true],
+[2,"Backpropagation fue inventado por primera vez en 2012.",false],
+[3,"TensorFlow fue desarrollado principalmente por:","Google","Facebook","Microsoft","Amazon"],
+[3,"Un tensor de dos dimensiones es:","Una matriz","Un escalar","Un vector","Un grafo"],
+[3,"PyTorch se diferencia del TensorFlow clásico por usar grafos:","Dinámicos","Estáticos","Sin nodos","Solo en C++"],
+[3,"Theano fue creado en 2007 por:","Yoshua Bengio","Yann LeCun","Geoffrey Hinton","Ian Goodfellow"],
+[3,"Keras funciona principalmente sobre:","TensorFlow","Caffe","Torch (Lua)","MXNet"],
+[3,"En Keras, tras definir las capas del modelo hay que:","Hacer compile (loss y optimizador) y luego fit","Solo llamar a fit","Instalar CUDA","Definir un grafo y abrir una sesión"],
+[3,"Apache MXNet está respaldado principalmente por:","Amazon","Facebook","Microsoft","IBM"],
+[3,"En TensorFlow clásico, tf.add(a, b) evalúa la suma inmediatamente.",false],
+[3,"Los frameworks modernos calculan los gradientes automáticamente a partir del grafo de computación.",true],
+[4,"El principal problema de una sigmoid saturada es que:","Mata los gradientes","No es diferenciable","Da salidas negativas","Necesita más parámetros"],
+[4,"La función de activación más usada en la práctica es:","ReLU","Sigmoid","Tanh","Maxout"],
+[4,"Las neuronas ReLU «muertas» se mitigan con:","Leaky ReLU y learning rates pequeños","Más sigmoid","Learning rates grandes","Eliminar el bias"],
+[4,"Inicializar todos los pesos a 0 es un error porque:","Todas las neuronas tendrían el mismo gradiente (simetría)","Satura la sigmoid","Aumenta el bias","Rompe el dropout"],
+[4,"La inicialización recomendada con ReLU es:","He","Todo ceros","Xavier con tanh","Constante 1"],
+[4,"Batch normalization permite:","Usar learning rates mayores","Eliminar la función de coste","Quitar los pesos","Evitar el forward pass"],
+[4,"Adam combina:","RMSProp con momentum","AdaGrad con L2","Dropout con L1","SGD con early stopping"],
+[4,"La regularización que favorece parámetros dispersos (sparse) es:","L1","L2","Dropout","Early stopping"],
+[4,"Dropout se aplica también durante la inferencia.",false],
+[4,"La regularización L2 se aplica a los pesos y no a los biases.",true],
+[5,"Un filtro 5×5 sobre una imagen 32×32×3 (stride 1, sin padding) produce un mapa de activación de:","28×28","32×32","27×27","5×5"],
+[5,"La profundidad de un filtro convolucional debe ser:","Igual a la de la entrada","1","El doble de la entrada","Aleatoria"],
+[5,"Max pooling 2×2 con stride 2 reduce el tamaño espacial en un:","75 %","25 %","50 %","90 %"],
+[5,"Las capas max pooling:","No añaden parámetros","Añaden un filtro por canal","Cambian la profundidad","Solo se usan al final"],
+[5,"El primer modelo de deep learning que ganó ILSVRC (2012) y usó ReLU fue:","AlexNet","VGG","LeNet","GoogLeNet"],
+[5,"VGGNet se caracteriza por usar filtros de tamaño:","3×3","11×11","7×7","Solo 1×1"],
+[5,"Transfer learning consiste en:","Reutilizar un modelo preentrenado y reentrenar las últimas capas","Entrenar sin datos","Aumentar imágenes","Eliminar las capas convolucionales"],
+[5,"Data augmentation:","Genera variantes de las imágenes conservando la clase","Cambia la etiqueta de las imágenes","Reduce el tamaño del dataset","Sustituye la función de coste"],
+[5,"En una CNN, los parámetros aprendidos de una capa convolucional están en los filtros.",true],
+[5,"Hubel y Wiesel (1959) experimentaron con el cerebro de un perro.",false],
+[6,"Las representaciones one-hot de «hotel» y «motel» son:","Ortogonales","Idénticas","Opuestas","Muy similares"],
+[6,"La idea clave de word2vec es que el significado de una palabra viene dado por:","Su contexto","Reglas manuales","Su frecuencia absoluta","Su orden alfabético"],
+[6,"word2vec fue presentado en:","2013","2003","2008","2018"],
+[6,"El modelo skip-gram predice:","El contexto a partir de la palabra central","La palabra central a partir del contexto","El sentimiento del texto","La siguiente frase"],
+[6,"Se usan dos vectores (u y v) por palabra porque:","Simplifica la optimización y da mejores resultados","Duplica el vocabulario","Es obligatorio en one-hot","Lo exige softmax"],
+[6,"El número de parámetros de word2vec (vocabulario V, dimensión d) es:","2dV","dV","V²","d²"],
+[6,"Negative sampling evita:","Recorrer todo el vocabulario en cada cálculo","Usar vectores densos","Definir el contexto","El producto escalar"],
+[6,"La función softmax convierte números en una distribución de probabilidad que suma 1.",true],
+[7,"El hidden state de una RNN funciona como:","Memoria","Función de coste","Optimizador","Filtro"],
+[7,"La traducción automática es un problema de tipo:","Secuencia → secuencia","Una entrada → una salida","Una entrada → secuencia","No secuencial"],
+[7,"En una vanilla RNN, los parámetros (matrices W):","Son los mismos en todos los time steps","Cambian en cada time step","Son los hidden states","Son los inputs"],
+[7,"El gradient clipping sirve contra:","Exploding gradients","Vanishing gradients","Overfitting","El dropout"],
+[7,"La gate de la LSTM que decide cuánto se olvida es la:","Forget gate","Input gate","Output gate","Reset gate"],
+[7,"La GRU fue introducida en:","2014","1997","2006","2018"],
+[7,"Para generar texto con un modelo del lenguaje RNN se:","Muestrea de la distribución softmax","Elimina el softmax","Usa solo backpropagation","Aplica batch normalization"],
+[7,"La LSTM mantiene un cell state además del hidden state.",true],
+[7,"TBPTT hace backpropagation sobre toda la secuencia sin truncarla.",false],
+[8,"En reinforcement learning el agente aprende:","Las acciones que maximizan la recompensa","Etiquetas de salida","Clusters","Una reducción de dimensionalidad"],
+[8,"Un MDP se define mediante la tupla:","(S, A, P, γ, R)","(X, Y)","(W, b)","(h, c)"],
+[8,"La propiedad de Markov dice que:","El estado actual caracteriza completamente el entorno","El futuro depende de todo el historial","Las transiciones son siempre deterministas","γ debe ser 0"],
+[8,"Si el discount factor γ es pequeño, las recompensas futuras:","Pesan menos","Pesan más","Desaparecen siempre","Se duplican"],
+[8,"Conociendo Q*, la política óptima consiste en:","Elegir la acción con mayor Q en cada estado","Elegir acciones al azar","Elegir la acción con menor Q","Repetir la primera acción"],
+[8,"En el Deep Q-learning de Atari Breakout, el estado es:","4 frames consecutivos de 84×84","Un vector simbólico del juego","Ecuaciones físicas de la bola","Un solo píxel"],
+[8,"Experience replay sirve para:","Romper la correlación entre muestras consecutivas","Aumentar γ","Eliminar la red neuronal","Evitar la exploración"],
+[8,"Value iteration es práctico cuando hay millones de estados.",false],
+[8,"En el cart-pole el estado incluye el ángulo del poste y la posición y velocidad del carro.",true],
+[9,"Frente a una CPU, una GPU tiene:","Miles de cores más lentos","Pocos cores muy rápidos","Ninguna memoria propia","Menor ancho de banda"],
+[9,"Librería de NVIDIA optimizada para deep learning:","cuDNN","OpenCL","DistBelief","Clipper"],
+[9,"La alternativa abierta a CUDA para otras tarjetas es:","OpenCL","TPU","cuDNN","Caffe"],
+[9,"En data parallelism cada máquina tiene:","Una copia completa del modelo y un subconjunto de datos","Una capa del modelo","Solo los gradientes","Únicamente el parameter server"],
+[9,"Downpour SGD fue implementado por Google en:","DistBelief","Keras","Theano","Torch"],
+[9,"Un problema típico del SGD asíncrono es:","El stale gradient","Las ReLU muertas","El vanishing gradient","El zero-padding"],
+[9,"Para evitar que la lectura de datos sea el cuello de botella conviene usar:","SSD y varios hilos de CPU","Disco HDD","Un solo hilo","Menos RAM"],
+[9,"Las GPU aceleran las redes porque estas son multiplicaciones de matrices paralelizables.",true],
+[9,"Parameter averaging no necesita esperar al worker más lento.",false],
+[10,"Durante la inferencia se realiza:","Solo el forward pass","Solo el backward pass","Forward y backward","Ninguno"],
+[10,"El batching en serving es útil cuando:","Hay muchas requests por segundo","Llega una request cada minuto","No hay GPU","Hay versionado de modelos"],
+[10,"Un load balancer:","Reparte las requests entre varios servidores","Versiona los modelos","Entrena el modelo","Crea batches en un servidor"],
+[10,"TensorFlow Serving ofrece interfaces:","gRPC y REST","Solo SOAP","FTP","SSH"],
+[10,"El training-serving skew es:","Una degradación entre entrenamiento e inferencia","Un tipo de overfitting","Un exploding gradient","Un tipo de underfitting"],
+[10,"Amazon presentó AWS en:","2006","1999","2012","2016"],
+[10,"¿Cuál NO es componente de una continuous training pipeline?","Generator network","Validación de datos","Entrenamiento","Despliegue del modelo"],
+[10,"Un modelo puede mejorar sus métricas globales y empeorar en una subpoblación de usuarios.",true],
+[10,"La inferencia requiere más cómputo que el entrenamiento.",false],
+[11,"Las GAN fueron introducidas por:","Ian Goodfellow","Geoffrey Hinton","Yann LeCun","Yoshua Bengio"],
+[11,"Las GAN son un tipo de modelo:","Generativo","Supervisado exclusivamente","De refuerzo","Basado en reglas"],
+[11,"Las GAN modelan la función de densidad de forma:","Implícita","Explícita","Analítica","No modelan datos"],
+[11,"En el juego de una GAN, el discriminador intenta:","Maximizar el objetivo","Minimizarlo","Generar ruido","Reducir D(x) a 0"],
+[11,"La entrada de la generator network es:","Un vector aleatorio","Una imagen real","Una etiqueta","Un texto"],
+[11,"En AutoML de Google, el controller es:","Una RNN que propone child networks","Una CNN","Una SVM","Un autoencoder"],
+[11,"El few-shot learning busca:","Aprender a partir de pocos ejemplos","Usar millones de ejemplos","Evitar tareas distintas","Funcionar solo con imágenes"],
+[11,"El resultado de interés al entrenar una GAN es principalmente el generador.",true]
+];
+const Q=D.map(d=>{if(typeof d[2]==="boolean")return{t:d[0]-1,q:d[1],tf:1,o:["Verdadero","Falso"],a:d[2]?0:1};
+const c=d[2],o=d.slice(2);for(let i=o.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[o[i],o[j]]=[o[j],o[i]]}
+return{t:d[0]-1,q:d[1],o,a:o.indexOf(c)}});
+const $=id=>document.getElementById(id),app=$("app");let n=0,ans=[];
+function start(){n=0;ans=[];app.innerHTML=`<div class="c"><div class="tag">${Q.filter(x=>!x.tf).length} opción múltiple · ${Q.filter(x=>x.tf).length} verdadero/falso</div><p class="q">Examen de repaso de los 11 temas</p><p class="sub">Verás la respuesta correcta al contestar cada pregunta y tu calificación al final.</p><button class="btn" id="go">Comenzar</button></div>`;$("go").onclick=show;$("pb").style.width="0"}
+function show(){const x=Q[n];$("pb").style.width=n/Q.length*100+"%";$("sub").textContent=`Pregunta ${n+1} de ${Q.length}`;
+app.innerHTML=`<span class="tag">${T[x.t]}</span><span class="tag">${x.tf?"Verdadero / Falso":"Opción múltiple"}</span><p class="q">${x.q}</p>${x.o.map((o,i)=>`<button class="o" data-i="${i}"><b>${"ABCD"[i]}</b><span>${o}</span></button>`).join("")}<div class="fb" id="fb"></div><div class="row"><button class="btn" id="nx" disabled>${n==Q.length-1?"Ver resultado":"Siguiente →"}</button></div>`;
+document.querySelectorAll(".o").forEach(b=>b.onclick=()=>{const i=+b.dataset.i;ans[n]=i;document.querySelectorAll(".o").forEach((e,k)=>{e.disabled=true;if(k==x.a)e.classList.add("ok");else if(k==i)e.classList.add("ko")});const f=$("fb");f.className="fb s "+(i==x.a?"ok":"ko");f.innerHTML=i==x.a?"✅ ¡Correcto!":`❌ Incorrecto. Respuesta correcta: <b>${x.o[x.a]}</b>`;$("nx").disabled=false});
+$("nx").onclick=()=>{n++;n<Q.length?show():end()}}
+function end(){const by=T.map(()=>[0,0]);let ok=0;Q.forEach((x,i)=>{by[x.t][1]++;if(ans[i]==x.a){ok++;by[x.t][0]++}});
+const p=Math.round(ok/Q.length*100),g=p>=90?"Sobresaliente":p>=70?"Notable":p>=50?"Aprobado":"A reforzar",C=2*Math.PI*52,col=p>=50?"var(--ok)":"var(--ko)";
+$("pb").style.width="100%";$("sub").textContent="Resultado final";
+app.innerHTML=`<div class="c"><svg class="ring" width="140" height="140" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--bd)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C*p/100} ${C}" transform="rotate(-90 60 60)"/><text x="60" y="68" text-anchor="middle" fill="var(--tx)" font-size="26" font-weight="700">${p}%</text></svg><div class="big">${ok} / ${Q.length}</div><div class="tag">${g}</div><div class="sub">Calificación: ${(ok/Q.length*10).toFixed(1)} / 10</div></div><h3>Por tema</h3>${by.map((b,i)=>`<div class="t"><span>${T[i]}</span><div class="bar"><i style="width:${b[0]/b[1]*100}%"></i></div><span>${b[0]}/${b[1]}</span></div>`).join("")}<div class="row"><button class="btn g" id="rv">Repasar respuestas</button><button class="btn" id="rt">Repetir examen</button></div>`;
+$("rt").onclick=()=>location.reload();$("rv").onclick=()=>{app.innerHTML=`<h3>Repaso</h3>`+Q.map((x,i)=>`<div class="r"><span class="tag">${T[x.t]}</span><div><b>${i+1}.</b> ${x.q}</div><div style="color:var(--${ans[i]==x.a?"ok":"ko"})">${ans[i]==x.a?"✅":"❌ Tu respuesta: "+x.o[ans[i]]}</div>${ans[i]==x.a?"":`<div style="color:var(--ok)">Correcta: ${x.o[x.a]}</div>`}</div>`).join("")+`<div class="row"><button class="btn" id="bk">Volver</button></div>`;$("bk").onclick=end}}
+start();
+</script></body></html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Test · Sistemas Cognitivos Artificiales</title>
+<style>
+:root{--bg:#f4f6fb;--c:#fff;--t:#1c2333;--m:#667;--p:#4f46e5;--ok:#16a34a;--ko:#dc2626;--b:#dde2ee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1320;--c:#1a2033;--t:#e8ebf5;--m:#9aa3bd;--b:#2d3550}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px}h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.15rem;line-height:1.4}
+.card{background:var(--c);border:1px solid var(--b);border-radius:14px;padding:20px;margin:14px 0}
+.tag{display:inline-block;background:var(--p);color:#fff;border-radius:99px;padding:2px 10px;font-size:.78rem}
+button{font:inherit;cursor:pointer}.opt{display:block;width:100%;text-align:left;background:var(--c);color:var(--t);border:2px solid var(--b);border-radius:10px;padding:12px 14px;margin:8px 0}
+.opt:hover:not(:disabled){border-color:var(--p)}.opt.ok{border-color:var(--ok);background:rgba(22,163,74,.13)}.opt.ko{border-color:var(--ko);background:rgba(220,38,38,.12)}
+.go{background:var(--p);color:#fff;border:0;border-radius:10px;padding:12px 22px;font-weight:600;margin-top:8px}
+.bar{height:8px;background:var(--b);border-radius:9px;overflow:hidden}.bar i{display:block;height:100%;background:var(--p);transition:width .3s}
+.fb{margin-top:12px;padding:12px 14px;border-radius:10px;font-size:.95rem}.fb.ok{background:rgba(22,163,74,.13)}.fb.ko{background:rgba(220,38,38,.12)}
+.row{display:flex;justify-content:space-between;gap:10px;color:var(--m);font-size:.9rem;margin-bottom:8px}
+select{font:inherit;padding:10px;border-radius:10px;border:1px solid var(--b);background:var(--c);color:var(--t);width:100%;margin:6px 0 12px}
+.big{font-size:3rem;font-weight:800;color:var(--p)}table{width:100%;border-collapse:collapse}td{padding:6px 4px;border-bottom:1px solid var(--b);font-size:.92rem}
+</style></head><body><main id="app"></main>
+<script>
+const T=["1 · Introducción al deep learning","2 · Entrenamiento de redes neuronales","3 · Frameworks","4 · Aspectos prácticos del entrenamiento","5 · CNN","6 · Word vectors","7 · RNN","8 · Deep Reinforcement Learning","9 · Redes neuronales en Big Data","10 · Cloud y producción","11 · Últimos avances (GAN, meta-learning)"];
+const VF=["Verdadero","Falso"];
+// [tema, pregunta, opciones, índice correcto, explicación]
+const Q=[
+[0,"El deep learning es un tipo de machine learning, que a su vez es un área de la IA.",VF,0,"Jerarquía: IA ⊃ machine learning ⊃ deep learning."],
+[0,"¿Qué busca el representation learning?",["Diseñar features a mano","Que el sistema aprenda también la representación a partir de datos en bruto","Reducir el número de capas","Eliminar el uso de datos"],1,"Evita el feature engineering: la propia red aprende la representación adecuada."],
+[0,"¿Qué dos factores explican principalmente el resurgimiento del deep learning?",["Nuevos algoritmos de back-propagation y SVM","Más datos disponibles y mayor capacidad de cómputo","Avances en neurociencia y menos capas","Aparición de Python y Keras"],1,"Los algoritmos ya existían; datos masivos y GPU hicieron viable entrenar redes profundas."],
+[0,"El perceptrón data de:",["1943","1958","1986","2006"],1,"McCulloch-Pitts: 1943; perceptrón: 1958; ADALINE: 1960."],
+[0,"La idea de back-propagation y de las representaciones distribuidas surge en la época del:",["Cybernetics (años 40-60)","Conexionismo (años 80)","Auge de las SVM (años 90)","Big Data (2010)"],1,"El conexionismo de los 80 aportó back-propagation y representaciones distribuidas."],
+[0,"Las redes LSTM datan de 1997 (Hochreiter y Schmidhuber).",VF,0,"Se desarrollaron para problemas de secuencias."],
+[1,"En MNIST (imágenes 28x28), la input layer de la red del tema tiene:",["10 neuronas","28 neuronas","784 neuronas","256 neuronas"],2,"28×28 = 784 píxeles aplanados en un vector."],
+[1,"¿Por qué se usa MSE y no el número de fallos como función de coste?",["Es más fácil de interpretar","Se necesita una función diferenciable para gradient descent","Es siempre menor","Evita el overfitting"],1,"Gradient descent necesita derivadas; contar fallos no es diferenciable."],
+[1,"La update rule de gradient descent es:",["θ ← θ + η∇C","θ ← θ − η∇C","θ ← θ · η","θ ← ∇C"],1,"Nos movemos en sentido opuesto al gradiente (máxima subida) para reducir el coste."],
+[1,"El número de neuronas de la hidden layer es un hiperparámetro.",VF,0,"Se elige antes de entrenar, p. ej. mediante búsqueda de hiperparámetros."],
+[1,"¿Para qué sirve backpropagation?",["Inicializar pesos","Calcular eficientemente los gradientes de la red","Elegir el learning rate","Normalizar datos"],1,"Aplica la regla de la cadena para obtener los gradientes respecto a todos los parámetros."],
+[1,"Entrenar una red neuronal equivale a un problema de optimización: minimizar la función de coste.",VF,0,"Buscamos los pesos y biases que minimicen C(w,b)."],
+[2,"En un grafo de computación de TensorFlow:",["Nodos = datos, aristas = operaciones","Nodos = operaciones, aristas = tensores","Solo contiene variables","Se evalúa línea a línea"],1,"Grafo dirigido: los nodos son operaciones y los tensores fluyen por las aristas."],
+[2,"Un tensor 0-dimensional es:",["Un vector","Una matriz","Un escalar","Un grafo"],2,"0-D escalar, 1-D vector, 2-D matriz."],
+[2,"En TF clásico, tras op1 = tf.add(2,3), op1 contiene el valor 5.",VF,1,"Solo construye el grafo; el resultado se obtiene con sess.run(op1)."],
+[2,"Ventaja clave de los frameworks respecto a los gradientes:",["Los eliminan","Los calculan automáticamente a partir del grafo","Los aproximan siempre numéricamente","Los guardan en disco"],1,"Autodiferenciación: solo defines la arquitectura."],
+[2,"Keras es una librería de alto nivel que facilita el entrenamiento de redes con Python.",VF,0,"Se apoya en frameworks como TensorFlow."],
+[2,"TensorFlow fue desarrollado por Google y liberado como open-source en:",["2010","2013","2015","2019"],2,"Se liberó en 2015; el núcleo está programado en C++."],
+[3,"¿Por qué sigmoid «mata» los gradientes?",["Es lenta de calcular","Al saturarse, su derivada es casi 0 y anula el gradiente propagado","Su salida es negativa","Tiene dos parámetros"],1,"Gradiente local ≈ 0 ⇒ el producto en backprop también ≈ 0."],
+[3,"La unidad de activación más usada y recomendada en la práctica es:",["Sigmoid","Tanh","ReLU","Maxout"],2,"No satura en positivo, es eficiente y acelera la convergencia."],
+[3,"Inicializar todos los parámetros a 0 es un buen punto de partida.",VF,1,"Todas las neuronas tendrían el mismo gradiente: hay que romper la simetría."],
+[3,"La inicialización de He está pensada para redes con:",["Sigmoid","Tanh","ReLU","Softmax"],2,"w = randn(n)·√(2/n)."],
+[3,"Leaky ReLU intenta resolver:",["La saturación de sigmoid","Las neuronas ReLU «muertas»","El overfitting","La inicialización"],1,"Añade una pequeña pendiente en el régimen negativo."],
+[3,"Las técnicas de regularización sirven para combatir el overfitting.",VF,0,"Reducen la capacidad de memorizar el dataset de entrenamiento."],
+[4,"Una imagen en color de 300×300 tiene:",["90 000 valores","270 000 valores","300 valores","900 valores"],1,"300×300×3 canales RGB."],
+[4,"Un filtro 5×5×3 aplicado sobre una imagen 32×32×3 (sin padding, stride 1) da un activation map de:",["32×32","30×30","28×28","5×5"],2,"32−5+1 = 28."],
+[4,"Los filtros deben tener la misma profundidad que la imagen de entrada.",VF,0,"Si no, no se podría hacer el producto escalar con la región de la imagen."],
+[4,"En una capa convolucional, los parámetros que se aprenden están en:",["Las activaciones","Los filtros","La imagen","El dataset"],1,"Pesos de los filtros (+ bias)."],
+[4,"Las CNN reducen parámetros frente a capas fully connected porque aprovechan la estructura espacial de la imagen.",VF,0,"Los filtros se comparten por toda la imagen."],
+[4,"La primera CNN práctica entrenada con gradient descent (dígitos postales) fue de:",["Hubel y Wiesel","Yann LeCun (1998)","Krizhevsky (2012)","Hinton (2006)"],1,"Hubel y Wiesel (1959) fue el experimento con gatos."],
+[5,"En representación discreta, «hotel» y «motel» son vectores:",["Muy similares","Ortogonales (sin similitud)","Idénticos","Densos"],1,"One-hot: imposible medir similitud semántica."],
+[5,"La idea clave de word2vec es que el significado de una palabra viene dado por:",["Su definición","Las palabras que aparecen frecuentemente junto a ella","Su longitud","Su categoría gramatical"],1,"Hipótesis distribucional: el contexto define el significado."],
+[5,"Con vocabulario V y dimensión d, el nº de parámetros de word2vec es:",["dV","2dV","d²","V²"],1,"Hay dos vectores (u y v) por palabra."],
+[5,"Skip-gram predice:",["La palabra central a partir del contexto","El contexto a partir de la palabra central","La siguiente frase","La clase del texto"],1,"CBOW hace lo contrario: predice la central a partir de la «bag» de contexto."],
+[5,"Negative sampling se usa para:",["Aumentar el vocabulario","Evitar calcular el softmax sobre todo el vocabulario","Eliminar palabras comunes","Normalizar vectores"],1,"Acerca palabras que co-ocurren y aleja unas pocas muestreadas al azar."],
+[5,"Es común que king − man + woman ≈ queen en el espacio de word vectors.",VF,0,"Las relaciones semánticas se reflejan como diferencias de vectores (no siempre ocurre)."],
+[5,"La función softmax convierte números en una distribución de probabilidad cuya suma es:",["0","1","V","d"],1,"Todos los pᵢ suman 1."],
+[6,"¿Qué mantiene una RNN que actúa como memoria?",["Un buffer de imágenes","Un hidden state","Un grafo estático","Un filtro"],1,"El nuevo estado depende del input actual y del estado anterior."],
+[6,"En una RNN, los pesos cambian en cada time step.",VF,1,"Se usa un único conjunto de parámetros durante toda la secuencia."],
+[6,"El análisis de sentimiento con RNN es un problema de:",["Una entrada → secuencia","Secuencia → una salida","Secuencia → secuencia","Imagen → clase"],1,"Se toma una única salida al final de la secuencia."],
+[6,"Image captioning es un problema de:",["Una entrada → secuencia de salida","Secuencia → una salida","Clustering","Reducción de dimensionalidad"],0,"De una imagen se genera una frase."],
+[6,"Truncated BPTT consiste en:",["Eliminar el hidden state","Dividir la secuencia y hacer backprop solo en trozos cortos","Entrenar sin gradientes","Usar solo la última palabra"],1,"Reduce el coste de BPTT en secuencias largas."],
+[6,"LSTM se propuso para mitigar el problema del vanishing gradient de las RNN simples.",VF,0,"Sus puertas permiten conservar información a largo plazo."],
+[7,"En reinforcement learning, el agente aprende:",["A clasificar con etiquetas","Acciones según el estado para maximizar la recompensa","Clusters","Distribuciones de densidad"],1,"Interactúa con un entorno recibiendo estado y reward."],
+[7,"El MDP se define por (S, A, P, γ, R). γ es:",["El learning rate","El discount factor","La política","El estado inicial"],1,"Valor entre 0 y 1 que pondera recompensas tempranas."],
+[7,"La propiedad de Markov dice que el estado actual caracteriza completamente el entorno.",VF,0,"La transición no depende de estados anteriores."],
+[7,"Cuanto menor es γ:",["Más pesan las recompensas futuras","Menos pesan las recompensas futuras","No cambia nada","Se anula la política"],1,"γ=1 implica sin descuento."],
+[7,"Conociendo Q*, la política óptima π* es:",["Imposible de calcular","Elegir la acción con mayor Q* en cada estado","Elegir acciones al azar","Elegir la de menor Q*"],1,"π*(s)=argmax_a Q*(s,a)."],
+[7,"Deep Q-Learning usa una red neuronal para aproximar la función Q.",VF,0,"La optimal Q satisface la ecuación de Bellman."],
+[8,"Frente a una CPU, una GPU tiene:",["Menos cores y más reloj","Miles de cores a menor velocidad de reloj","Misma RAM del sistema","Solo un hilo"],1,"Masivo paralelismo con operaciones simples."],
+[8,"La GPU usa su propia memoria RAM y destaca por su gran ancho de banda.",VF,0,"La CPU, en cambio, se optimiza para baja latencia."],
+[8,"La multiplicación de matrices se paraleliza bien porque:",["Es secuencial","Cada elemento de salida es un producto escalar independiente","Requiere valores intermedios","Solo usa CPU"],1,"No se necesitan valores intermedios entre elementos de salida."],
+[8,"CUDA y cuDNN funcionan solo con GPU de:",["AMD","NVIDIA","Intel","Cualquiera"],1,"OpenCL es la alternativa abierta."],
+[8,"En data parallelism cada máquina tiene:",["Una parte del modelo","Una copia completa del modelo y un subconjunto de datos","Todos los datos","Solo la capa de salida"],1,"En model parallelism, en cambio, se reparte el modelo."],
+[8,"Downpour SGD se caracteriza por:",["Ser síncrono","Actualizaciones asíncronas con el parameter server","No usar gradientes","Esperar al worker más lento"],1,"Evita esperas pero puede sufrir el stale gradient problem."],
+[8,"Parameter averaging debe esperar al worker más lento.",VF,0,"Es síncrono y se detiene si un worker falla (salvo medidas)."],
+[9,"Inferir con un modelo ya entrenado es, frente a entrenar:",["Más costoso","Computacionalmente menos costoso","Igual","Imposible en GPU"],1,"Solo se hace un forward pass, sin backpropagation."],
+[9,"La concurrencia en un servidor permite:",["Atender varias requests a la vez","Entrenar más rápido","Comprimir modelos","Versionar"],0,"Evita acumulación de peticiones y tiempos de respuesta largos."],
+[9,"El batching en serving agrupa requests en un buffer para aprovechar operaciones matriciales/GPU.",VF,0,"Solo útil si hay muchas requests por segundo."],
+[9,"Versionar modelos permite:",["Aumentar la precisión","Hacer rollback al modelo anterior","Eliminar el servidor","Entrenar en la nube"],1,"Si el nuevo modelo no funciona como se esperaba."],
+[9,"TensorFlow Serving ofrece interfaces:",["Solo SOAP","gRPC y REST","Solo FTP","Ninguna"],1,"Es el servidor oficial de TensorFlow."],
+[9,"Las TPU (Tensor Processing Unit) son hardware de Google para deep learning.",VF,0,"AWS nació en 2006; GCP, Azure y AWS son los grandes proveedores."],
+[10,"Las GAN fueron introducidas por:",["Hinton (2006)","Ian Goodfellow (2014)","LeCun (1998)","Mikolov (2013)"],1,"Son un tipo de modelo generativo."],
+[10,"Las GAN modelan:",["Explícitamente la función de densidad","Implícitamente la densidad: aprenden a generar ejemplos","Solo etiquetas","Ninguna distribución"],1,"Implicit density estimation, a diferencia de PixelRNN/CNN o VAE."],
+[10,"En una GAN, el discriminador intenta maximizar el objetivo y el generador minimizarlo.",VF,0,"Es un juego min-max entre ambas redes."],
+[10,"La entrada de la generator network es:",["Una imagen real","Un vector aleatorio","Una etiqueta","Texto"],1,"Cambiando el vector se generan imágenes distintas."],
+[10,"En AutoML (neural architecture search), el controller es una:",["CNN que clasifica","RNN que propone una child network, entrenada con feedback tipo RL","GAN","Base de datos"],1,"Aprende a diseñar arquitecturas, no solo hiperparámetros."],
+[10,"En few-shot learning se evalúa la capacidad de aprender nuevas tareas (meta-testing) tras entrenar en meta-training.",VF,0,"Hay dos niveles de optimización: learner y meta-learner."]
+];
+const $=document.getElementById("app");let qs,i,sc,ans,fil="all";
+const sh=a=>{a=[...a];for(let k=a.length-1;k>0;k--){const j=Math.random()*(k+1)|0;[a[k],a[j]]=[a[j],a[k]]}return a};
+function home(){$.innerHTML=`<h1>🧠 Test de Sistemas Cognitivos Artificiales</h1><p style="color:var(--m)">Maestría en IA · ${Q.length} preguntas de opción múltiple y verdadero/falso sobre las ideas clave de los 11 temas, con corrección inmediata.</p><div class="card"><label>Tema</label><select id="f"><option value="all">Todos los temas (${Q.length})</option>${T.map((t,k)=>`<option value="${k}">${t} (${Q.filter(q=>q[0]==k).length})</option>`).join("")}</select><button class="go" onclick="start()">Comenzar</button></div>`}
+function start(){fil=document.getElementById("f").value;qs=sh(Q.filter(q=>fil=="all"||q[0]==fil)).map(q=>{if(q[2].length<=2)return{...{t:q[0],q:q[1],o:q[2],c:q[3],e:q[4]}};const o=q[2].map((x,k)=>[x,k==q[3]]);const s=sh(o);return{t:q[0],q:q[1],o:s.map(x=>x[0]),c:s.findIndex(x=>x[1]),e:q[4]}});i=0;sc=0;ans=[];show()}
+function show(){const q=qs[i];$.innerHTML=`<div class="row"><span>Pregunta ${i+1}/${qs.length}</span><span>✔ ${sc}</span></div><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><div class="card"><span class="tag">Tema ${T[q.t].split(" ·")[0]}</span><h2>${q.q}</h2>${q.o.map((o,k)=>`<button class="opt" onclick="pick(${k})">${o}</button>`).join("")}<div id="fb"></div></div>`}
+function pick(k){const q=qs[i],ok=k==q.c;if(ok)sc++;ans.push(ok);document.querySelectorAll(".opt").forEach((b,j)=>{b.disabled=true;if(j==q.c)b.classList.add("ok");else if(j==k)b.classList.add("ko")});document.getElementById("fb").innerHTML=`<div class="fb ${ok?"ok":"ko"}"><b>${ok?"✅ ¡Correcto!":"❌ Incorrecto"}</b><br>${q.e}</div><button class="go" onclick="next()">${i==qs.length-1?"Ver resultado":"Siguiente →"}</button>`}
+function next(){i++;i<qs.length?show():end()}
+function end(){const p=Math.round(sc/qs.length*100),by={};qs.forEach((q,k)=>{by[q.t]=by[q.t]||[0,0];by[q.t][1]++;if(ans[k])by[q.t][0]++});
+const msg=p>=90?"🏆 Excelente dominio":p>=70?"👍 Buen nivel":p>=50?"📘 Aprobado, repasa los fallos":"📚 Necesitas repasar más";
+$.innerHTML=`<div class="card" style="text-align:center"><div class="big">${p}%</div><h2>${sc} de ${qs.length} correctas</h2><p>${msg}</p></div><div class="card"><b>Resultado por tema</b><table>${Object.keys(by).map(t=>`<tr><td>${T[t]}</td><td>${by[t][0]}/${by[t][1]}</td><td style="width:90px"><div class="bar"><i style="width:${by[t][0]/by[t][1]*100}%;background:${by[t][0]/by[t][1]<.6?"var(--ko)":"var(--ok)"}"></i></div></td></tr>`).join("")}</table></div><button class="go" onclick="start2()">Repetir</button> <button class="go" style="background:var(--m)" onclick="home()">Inicio</button>`}
+function start2(){fil=fil;const d=document.createElement("select");d.id="f";d.innerHTML=`<option value="${fil}"></option>`;$.appendChild(d);start()}
+home();
+</script></body></html>
